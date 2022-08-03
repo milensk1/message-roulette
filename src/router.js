@@ -8,8 +8,8 @@ const router = express.Router();
 router.post("/register", register);
 router.post("/login", login);
 
-router.get("/spin", verifyToken, spin);
-router.get("/wild", verifyToken, wild);
-router.get("/blast", verifyToken, blast);
+router.post("/spin", verifyToken, spin);
+router.post("/wild", verifyToken, wild);
+router.post("/blast", verifyToken, blast);
 
 export default router;
