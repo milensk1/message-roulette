@@ -22,14 +22,14 @@ APIs:
 ## Prerequisites
 
 ```
-installed and running MySQL server
+installed and running MySQL server, Redis:
+on Mac OS
 brew install mysql
 mysql.server start
-
-installed and running Redis
-on Mac OS
 brew install redis
 redis-server
+
+in MySQL create table "message_roulette"
 ```
 
 ## Install
