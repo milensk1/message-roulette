@@ -1,11 +1,7 @@
-import jwt from "jsonwebtoken";
 import { handleSpin, handleWild, handleBlast } from "./service.js";
 
 export const spin = (req, res) => {
   try {
-    const token = req.headers["authorization"];
-    const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
     handleSpin(req.app.io);
     res.send("OK");
   } catch (error) {

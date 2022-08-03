@@ -57,6 +57,6 @@ export const handleLogin = async (req) => {
     );
     return { accessToken, refreshToken };
   } catch (error) {
-    throw new Error(error);
+    throw new Error("Wrong credentials");
   }
 };

@@ -5,7 +5,7 @@ export const register = async (req, res) => {
     await handleRegister(req);
     res.json({ msg: "Registration Successful" });
   } catch (error) {
-    console.log(error);
+    res.status(400).send(error.message);
   }
 };
 
@@ -18,6 +18,6 @@ export const login = async (req, res) => {
     });
     res.json({ accessToken });
   } catch (error) {
-    res.status(404).json({ msg: error });
+    res.status(404).send(error.message);
   }
 };
