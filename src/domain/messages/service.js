@@ -33,11 +33,6 @@ export const handleWild = (io, num) => {
 };
 
 export const handleBlast = (io) => {
-  let clientIds = getConnectedClientIds(io);
-  if (clientIds?.length === 0) {
-    throw new Error(NO_CLIENTS);
-  }
-
   io.emit(EVENT, TO_ALL);
 };
 

@@ -10,7 +10,8 @@ import { createAdapter } from "@socket.io/redis-adapter";
 import jwt from "jsonwebtoken";
 
 dotenv.config();
-const port = process.env.PORT || 3000;
+const httpPort = process.env.HTTP_PORT || 3000;
+const ioPort = process.env.IO_PORT || 3001;
 
 const app = express();
 app.use(cors({ credentials: true, origin: "*" }));
@@ -30,7 +31,8 @@ const pubClient = createClient({ host: "localhost", port: 6379 });
 const subClient = pubClient.duplicate();
 Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
   io.adapter(createAdapter(pubClient, subClient));
-  httpServer.listen(port);
+  httpServer.listen(httpPort);
+  io.listen(ioPort)
 });
 
 // set authorization for socket.io
