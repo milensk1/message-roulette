@@ -6,8 +6,8 @@ const NO_PARAM = '"count" param is missing!';
 const RANDOM = "This was sent to you randomly.";
 const TO_ALL = "This was sent to everyone.";
 
-export const handleSpin = (io) => {
-  let clientIds = getConnectedClientIds(io);
+export const handleSpin = async (io) => {
+  let clientIds = await getConnectedClientIds(io);
   if (clientIds?.length === 0) {
     throw new Error(NO_CLIENTS);
   }
@@ -16,12 +16,12 @@ export const handleSpin = (io) => {
   io.to(randomId).emit(EVENT, RANDOM);
 };
 
-export const handleWild = (io, num) => {
+export const handleWild = async (io, num) => {
   if (!num) {
     throw new Error(NO_PARAM);
   }
 
-  let clientIds = getConnectedClientIds(io);
+  let clientIds = await getConnectedClientIds(io);
   if (clientIds?.length === 0) {
     throw new Error(NO_CLIENTS);
   }
@@ -36,8 +36,9 @@ export const handleBlast = (io) => {
   io.emit(EVENT, TO_ALL);
 };
 
-function getConnectedClientIds(io) {
-  return Array.from(io.sockets.sockets.keys());
+async function getConnectedClientIds(io) {
+  let clients =  await io.of('/').adapter.sockets(new Set());
+  return  Array.from(clients)
 }
 
 function getRandomItem(arr) {

@@ -25,15 +25,15 @@ const io = new Server(httpServer, {
     origin: "*",
   },
 });
-app.io = io;
 
 const pubClient = createClient({ host: "localhost", port: 6379 });
 const subClient = pubClient.duplicate();
 Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
   io.adapter(createAdapter(pubClient, subClient));
   httpServer.listen(httpPort);
-  io.listen(ioPort)
+  io.listen(ioPort);
 });
+app.io = io;
 
 // set authorization for socket.io
 io.use((socket, next) => {
