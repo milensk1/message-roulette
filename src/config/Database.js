@@ -1,6 +1,8 @@
+import dotenv from "dotenv";
 import { Sequelize } from "sequelize";
 
-const database = new Sequelize("message_roulette", "root", "qwerty!", {
+dotenv.config();
+const database = new Sequelize("message_roulette", "root", process.env.DATABASE_PASSWORD, {
   host: "localhost",
   dialect: "mysql",
 });

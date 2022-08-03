@@ -8,9 +8,10 @@ import { Server } from "socket.io";
 import { createClient } from "redis";
 import { createAdapter } from "@socket.io/redis-adapter";
 import jwt from "jsonwebtoken";
-const port = process.env.PORT || 3000;
 
 dotenv.config();
+const port = process.env.PORT || 3000;
+
 const app = express();
 app.use(cors({ credentials: true, origin: "*" }));
 app.use(cookieParser());

@@ -19,6 +19,19 @@ APIs:
 
 ```
 
+## Prerequisites
+
+```
+installed and running MySQL server
+brew install mysql
+mysql.server start
+
+installed and running Redis
+on Mac OS
+brew install redis
+redis-server
+```
+
 ## Install
 
 ```
