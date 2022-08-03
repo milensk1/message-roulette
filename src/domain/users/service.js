@@ -1,33 +1,35 @@
-import Users from "../models/UserModel.js";
+import userModel from "./userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const Register = async (req, res) => {
+export const handleRegister = async (req) => {
   const { name, email, password } = req.body;
 
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(password, salt);
   try {
-    await Users.create({
+    await userModel.create({
       name: name,
       email: email,
       password: hashPassword,
     });
-    res.json({ msg: "Registration Successful" });
   } catch (error) {
     console.log(error);
   }
 };
 
-export const Login = async (req, res) => {
+export const handleLogin = async (req) => {
   try {
-    const user = await Users.findAll({
+    const user = await userModel.findAll({
       where: {
         email: req.body.email,
       },
     });
     const match = await bcrypt.compare(req.body.password, user[0].password);
-    if (!match) return res.status(400).json({ msg: "Wrong Password" });
+    if (!match) {
+      throw new Error("Wrong credentials");
+    }
+
     const userId = user[0].id;
     const name = user[0].name;
     const email = user[0].email;
@@ -45,7 +47,7 @@ export const Login = async (req, res) => {
         expiresIn: "1w",
       }
     );
-    await Users.update(
+    await userModel.update(
       { refresh_token: refreshToken },
       {
         where: {
@@ -53,12 +55,8 @@ export const Login = async (req, res) => {
         },
       }
     );
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-    res.json({ accessToken });
+    return { accessToken, refreshToken };
   } catch (error) {
-    res.status(404).json({ msg: "Email not found" });
+    throw new Error(error);
   }
 };

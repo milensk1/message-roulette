@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import router from "./routes/index.js";
+import router from "./router.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { createClient } from "redis";
@@ -40,13 +40,6 @@ io.use((socket, next) => {
     socket.userId = payload.id;
     next();
   } catch (err) {
-    console.log()
+    console.log();
   }
-});
-
-io.on("connection", (socket) => {
-  socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
-    console.log(Object.keys(io.engine.clients));
-  });
 });
