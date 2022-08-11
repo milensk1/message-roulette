@@ -1,6 +1,13 @@
--- rename this file to .env
+# Rename this file to .env
+# Server
+HOST=localhost
 HTTP_PORT=3000
-IO_PORT=3001
-ACCESS_TOKEN_SECRET = youraccesssecret
-REFRESH_TOKEN_SECRET = yourrefreshsecret
-DATABASE_PASSWORD=yourdatabasesecret
+PUB_PORT=6379
+ACCESS_TOKEN_SECRET=yourTokenSecret
+REFRESH_TOKEN_SECRET=yourRefreshTokenSecret
+# DB
+DATABASE_DIALECT=mysql
+DATABASE_TABLE=yourDatabaseTable
+DATABASE_USER=yourDatabaseUser
+DATABASE_PASSWORD=yourRootPassword
+

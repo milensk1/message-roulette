@@ -10,8 +10,10 @@ import { createAdapter } from "@socket.io/redis-adapter";
 import jwt from "jsonwebtoken";
 
 dotenv.config();
-const httpPort = process.env.HTTP_PORT || 3000;
-const ioPort = process.env.IO_PORT || 3001;
+const host = process.env.HOST;
+const httpPort = process.env.HTTP_PORT;
+const pubPort = process.env.PUB_PORT;
+const tokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
 const app = express();
 app.use(cors({ credentials: true, origin: "*" }));
@@ -19,27 +21,23 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(router);
 
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-  },
-});
-
-const pubClient = createClient({ host: "localhost", port: 6379 });
+const server = createServer(app);
+const io = new Server(server);
+const pubClient = createClient({ host: host, port: pubPort });
 const subClient = pubClient.duplicate();
+
 Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
   io.adapter(createAdapter(pubClient, subClient));
-  httpServer.listen(httpPort);
-  io.listen(ioPort);
+  server.listen(httpPort);
 });
+
 app.io = io;
 
 // set authorization for socket.io
 io.use((socket, next) => {
   try {
     const token = socket.handshake.query.token;
-    const payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const payload = jwt.verify(token, tokenSecret);
     socket.userId = payload.id;
     next();
   } catch (err) {

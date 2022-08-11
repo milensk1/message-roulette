@@ -1,6 +1,11 @@
 import userModel from "./userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
+const tokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const refreshSecret = process.env.REFRESH_TOKEN_SECRET;
 
 export const handleRegister = async (req) => {
   const { name, email, password } = req.body;
@@ -33,20 +38,12 @@ export const handleLogin = async (req) => {
     const userId = user[0].id;
     const name = user[0].name;
     const email = user[0].email;
-    const accessToken = jwt.sign(
-      { userId, name, email },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: "1d",
-      }
-    );
-    const refreshToken = jwt.sign(
-      { userId, name, email },
-      process.env.REFRESH_TOKEN_SECRET,
-      {
-        expiresIn: "1w",
-      }
-    );
+    const accessToken = jwt.sign({ userId, name, email }, tokenSecret, {
+      expiresIn: "1d",
+    });
+    const refreshToken = jwt.sign({ userId, name, email }, refreshSecret, {
+      expiresIn: "1w",
+    });
     await userModel.update(
       { refresh_token: refreshToken },
       {
