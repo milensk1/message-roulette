@@ -7,13 +7,12 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { createClient } from "redis";
 import { createAdapter } from "@socket.io/redis-adapter";
-import jwt from "jsonwebtoken";
+import { verifySocket } from "./middleware/authentication.js";
 
 dotenv.config();
 const host = process.env.HOST;
 const httpPort = process.env.HTTP_PORT;
 const pubPort = process.env.PUB_PORT;
-const tokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
 const app = express();
 app.use(cors({ credentials: true, origin: "*" }));
@@ -23,24 +22,14 @@ app.use(router);
 
 const server = createServer(app);
 const io = new Server(server);
-const pubClient = createClient({ host: host, port: pubPort });
-const subClient = pubClient.duplicate();
+io.use((socket, next) => {
+  verifySocket(socket, next);
+});
+app.io = io;
 
+const pubClient = createClient({ host, port: pubPort });
+const subClient = pubClient.duplicate();
 Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
   io.adapter(createAdapter(pubClient, subClient));
   server.listen(httpPort);
-});
-
-app.io = io;
-
-// set authorization for socket.io
-io.use((socket, next) => {
-  try {
-    const token = socket.handshake.query.token;
-    const payload = jwt.verify(token, tokenSecret);
-    socket.userId = payload.id;
-    next();
-  } catch (err) {
-    console.log();
-  }
 });
